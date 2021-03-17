@@ -4,10 +4,12 @@ namespace controllers;
 
 include_once './repositories/ProductRepository.php';
 include_once './rules/BlackListSymbolsInterface.php';
+include_once './rules/ImageTypesInterface.php';
 
 use database\Connection;
 use repositories\ProductRepository;
 use rules\BlackListSymbolsInterface;
+use rules\ImageTypesInterface;
 use PDO;
 
 
@@ -15,7 +17,7 @@ use PDO;
  * Class ProductController
  * @package controllers
  */
-class ProductController implements BlackListSymbolsInterface
+class ProductController implements BlackListSymbolsInterface, ImageTypesInterface
 {
     /**
      * @var PDO
@@ -49,28 +51,43 @@ class ProductController implements BlackListSymbolsInterface
         return $errors;
     }
 
-    public function validate($data)
+    public function validate(&$data)
     {
         $errors = [];
-//        $data = str_replace(self::BLACK_LIST, "", $data);
-//        if (!isset($data['reviewer_name']) || empty($data['reviewer_name'])) {
-//            $errors['reviewer_name'] = 'Name is required! ';
-//        }
-//        if (!isset($data['reviewer_email']) || empty($data['reviewer_email'])) {
-//            $errors['reviewer_email'] = 'Email is required! ';
-//        }
-//        if (!isset($data['message']) || strlen(trim($data['message'])) == 0) {
-//            $errors['message'] = 'Message are required! ';
-//        }
-//        if (isset($data['reviewer_name']) && strlen($data['reviewer_name']) > 32) {
-//            $errors['reviewer_name'] .= 'Name should be less than 32 symbols! ';
-//        }
-//        if (isset($data['reviewer_email']) && strlen($data['reviewer_email']) > 128) {
-//            $errors['reviewer_email'] .= 'Email should be less than 128 symbols! ';
-//        }
-//        if (isset($data['reviewer_email']) && (!filter_var($data['reviewer_email'], FILTER_VALIDATE_EMAIL))) {
-//            $errors['reviewer_email'] .= 'Email not valid!';
-//        }
+        $image_dir = './images/';
+        if ($_FILES['uploadImage']['error'] == 0) {
+            if (in_array($_FILES['uploadImage']['type'], self::ACCEPT_IMAGE_TYPES)) {
+                move_uploaded_file($_FILES['uploadImage']['tmp_name'], $image_dir . $_FILES['uploadImage']['name']);
+                $data['image'] = $image_dir . $_FILES['uploadImage']['name'];
+            } else {
+                $errors['uploadImage'] = 'File type unsupported';
+            }
+        } else {
+            $data['image'] = $data['link'];
+        }
+
+        $data = str_replace(self::BLACK_LIST, "", $data);
+        if (!isset($data['product_name']) || empty($data['product_name'])) {
+            $errors['product_name'] = 'Product name is required! ';
+        }
+        if (isset($data['product_name']) && strlen($data['product_name']) > 128) {
+            $errors['product_name'] .= 'Product name should be less than 128 symbols! ';
+        }
+        if (isset($data['link']) && strlen(trim($data['link'])) > 255) {
+            $errors['link'] = 'Link too long! Need less than 255 symbols! ';
+        }
+        if (!isset($data['creator_name']) || empty($data['creator_name'])) {
+            $errors['creator_name'] = 'Message is required! ';
+        }
+        if (isset($data['creator_name']) && strlen($data['creator_name']) > 64) {
+            $errors['creator_name'] .= 'Creator name should be less than 64 symbols! ';
+        }
+        if (!isset($data['avg_price']) || empty($data['avg_price'])) {
+            $errors['avg_price'] .= 'Price is required!';
+        }
+        if (isset($data['avg_price']) && !is_numeric($data['avg_price'])) {
+            $errors['avg_price'] .= 'Price should be a number! ';
+        }
 
         return $errors;
     }
@@ -103,6 +120,16 @@ class ProductController implements BlackListSymbolsInterface
     }
 
     /**
+     * @param string $column
+     * @param string $sortRule
+     * @return mixed
+     */
+    public function sortByColumn(string $column, $sortRule = 'desc')
+    {
+        return $this->connection->sortByColumn($column, $sortRule);
+    }
+
+    /**
      *
      */
     public function setConnection()
@@ -131,6 +158,7 @@ class ProductController implements BlackListSymbolsInterface
                         <th>Id</th>
                         <th>Name</th>
                         <th>Creator</th>
+                        <th>Price</th>
                         <th>Creation Date</th>
                         <th>Comments amount</th>
                         <th>Image</th>
@@ -141,6 +169,7 @@ class ProductController implements BlackListSymbolsInterface
             $id = $data['id'];
             $link = '<a href=' . "/ProductPage.php?page=$id" . '>See More</a>';
             $tableMiddlePart .= '<tr><td>' . $id . '<td>' . $data['product_name'] . '</td>' . '<td>' . $data['creator_name'] . '</td>'
+                . '<td>' . $data['avg_price'] . '</td>'
                 . '<td>' . $data['created_at'] . '</td>'
                 . '<td>' . $data['comments_amount'] . '</td>'
                 . '<td><img width="38" height=54" src=' . $data['image'] . '></td>'

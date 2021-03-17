@@ -109,7 +109,7 @@ echo $layout->drawNavbar();
 <section class="CommentsTable">
     <div class="container">
         <div class="row">
-            <div class="col-md-6 offset-2">
+            <div class="col-md-8 offset-2">
                 <div>
                     <h4 id="table">Comments: </h4>
                     <table id="table">

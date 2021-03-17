@@ -52,25 +52,22 @@ class CommentController implements BlackListSymbolsInterface
     public function validate($data)
     {
         $errors = [];
-//        $data = str_replace(self::BLACK_LIST, "", $data);
-//        if (!isset($data['reviewer_name']) || empty($data['reviewer_name'])) {
-//            $errors['reviewer_name'] = 'Name is required! ';
-//        }
-//        if (!isset($data['reviewer_email']) || empty($data['reviewer_email'])) {
-//            $errors['reviewer_email'] = 'Email is required! ';
-//        }
-//        if (!isset($data['message']) || strlen(trim($data['message'])) == 0) {
-//            $errors['message'] = 'Message are required! ';
-//        }
-//        if (isset($data['reviewer_name']) && strlen($data['reviewer_name']) > 32) {
-//            $errors['reviewer_name'] .= 'Name should be less than 32 symbols! ';
-//        }
-//        if (isset($data['reviewer_email']) && strlen($data['reviewer_email']) > 128) {
-//            $errors['reviewer_email'] .= 'Email should be less than 128 symbols! ';
-//        }
-//        if (isset($data['reviewer_email']) && (!filter_var($data['reviewer_email'], FILTER_VALIDATE_EMAIL))) {
-//            $errors['reviewer_email'] .= 'Email not valid!';
-//        }
+        $data = str_replace(self::BLACK_LIST, "", $data);
+        if (!isset($data['commentator_name']) || empty($data['commentator_name'])) {
+            $errors['commentator_name'] = 'Name is required! ';
+        }
+        if (isset($data['commentator_name']) && strlen($data['commentator_name']) > 64) {
+            $errors['commentator_name'] .= 'Name should be less than 64 symbols! ';
+        }
+        if (!isset($data['mark']) || empty($data['mark'])) {
+            $errors['mark'] = 'Mark is required! ';
+        }
+        if (isset($data['mark']) && !is_numeric($data['mark'])) {
+            $errors['mark'] = 'Mark should be a number! ';
+        }
+        if (!isset($data['message']) || strlen(trim($data['message'])) == 0) {
+            $errors['message'] = 'Message are required! ';
+        }
 
         return $errors;
     }

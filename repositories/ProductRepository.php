@@ -33,7 +33,7 @@ class ProductRepository implements ProductInterface
      */
     public function all()
     {
-        $query = $this->db->query("SELECT products.id, product_name, creator_name, image, products.created_at, count(comments.id) as comments_amount FROM "
+        $query = $this->db->query("SELECT products.id, product_name, creator_name, avg_price, image, products.created_at, count(comments.id) as comments_amount FROM "
             . self::PRODUCTS_TABLE
             . " left join comments on comments.product_id = products.id 
                     group by products.id order by id desc");
@@ -105,4 +105,17 @@ class ProductRepository implements ProductInterface
         return $query->fetch(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param string $column
+     * @param string $sortRule
+     * @return array
+     */
+    public function sortByColumn(string $column, $sortRule = 'desc')
+    {
+        $query = $this->db->query("SELECT products.id, product_name, creator_name, image, products.created_at, products.avg_price, count(comments.id) as comments_amount FROM "
+            . self::PRODUCTS_TABLE
+            . " left join comments on comments.product_id = products.id 
+                    group by products.id order by $column $sortRule");
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

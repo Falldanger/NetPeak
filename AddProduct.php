@@ -36,15 +36,15 @@ echo $layout->drawNavbar();
 ?>
 
 <div class="container">
-    <h1>Form for add products</h1>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6 offset-3">
+            <h1>Form for add products</h1>
             <?php
             if (isset($message)){
                 echo '<div class="alert alert-success" role="alert">'.$message.'</div>';
             }
             ?>
-            <form action="" id="addReview" method="post">
+            <form enctype="multipart/form-data" action="" id="addReview" method="post">
                 <div class="form-group">
                     <label for="product_name">Product name</label>
                     <input type="text" class="form-control" id="product_name" name="product_name"
@@ -59,14 +59,24 @@ echo $layout->drawNavbar();
                     </span>
                 </div>
                 <div class="form-group">
-                    <label for="image">Image</label>
-                    <input type="text" class="form-control" id="image" name="image"
-                           value="<?php if (isset($_POST['image'])) {
-                               echo $_POST['image'];
+                    <p>Image</p>
+                    <input name="uploadImage" id="uploadImage" accept="image/*" type="file"/>
+                    <span>
+                        <?php if (isset($errors['uploadImage'])) {
+                            echo $errors['uploadImage'];
+                        } ?>
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="link">Link</label>
+                    <input type="text" class="form-control" id="link" name="link"
+                           value="<?php if (isset($_POST['link'])) {
+                               echo $_POST['link'];
                            } ?>" maxlength="255">
                     <span>
-                        <?php if (isset($errors['image'])) {
-                            echo $errors['image'];
+                        <?php if (isset($errors['link'])) {
+                            echo $errors['link'];
                         } ?>
                     </span>
                 </div>
