@@ -16,7 +16,7 @@ class MainLayout
     {
         return '<header class="navbar">
                     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-                        <a class="navbar-brand" href="/">Guest book</a>
+                        <a class="navbar-brand" href="/">NetPeak</a>
                         <div class="collapse navbar-collapse" id="navbarCollapse">
                         <ul class="navbar-nav mr-auto">
                             <li class="nav-item active">

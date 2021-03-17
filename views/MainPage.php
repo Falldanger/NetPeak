@@ -66,7 +66,7 @@ $productTableColumns = ProductRepository::PRODUCT_TABLE_COLUMNS;
         <div class="row">
             <div class="col-md-8 offset-1">
                 <div>
-                    <!--                <h4 id="table">Products table</h4>-->
+                    <h4 id="table">Products table</h4>
                     <table id="table">
                         <?php
 

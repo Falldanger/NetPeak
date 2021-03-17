@@ -2,8 +2,6 @@
 
 namespace database;
 
-include('config.php');
-
 use PDO;
 
 /**
@@ -29,7 +27,7 @@ class Connection
     public static function getInstance()
     {
         if (self::$db === null) {
-            self::$db = new PDO("mysql:host=".DBHOST.';' . 'dbname='.DBNAME, DBUSER, DBPWD);
+            self::$db = new PDO("mysql:host=localhost;" . 'dbname=netpeak', 'root', 'root');
         }
 
         return self::$db;
